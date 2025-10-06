@@ -27,6 +27,8 @@ export interface Book {
   editorial: Editorial;
 }
 
+export type ReadingStatus = 'Sin iniciar' | 'En curso' | 'Completado';
+
 export interface Author {
   id: number;
   birthDate: string;
@@ -35,4 +37,19 @@ export interface Author {
   image: string;
   books: Book[];
   prizes: Prize[];
+  readingProgress: number; // 0-100
+}
+
+export interface ReadingStats {
+  average: number;
+  sinIniciar: number;
+  enCurso: number;
+  completado: number;
+}
+
+// Helper function to get reading status from progress
+export function getReadingStatus(progress: number): ReadingStatus {
+  if (progress === 0) return 'Sin iniciar';
+  if (progress === 100) return 'Completado';
+  return 'En curso';
 }
