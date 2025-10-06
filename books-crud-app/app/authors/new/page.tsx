@@ -72,13 +72,13 @@ export default function NewAuthor() {
             </div>
 
             <div>
-              <label htmlFor="country" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
-                País
+              <label htmlFor="birthDate" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                Fecha de Nacimiento
               </label>
               <input
-                type="text"
-                id="country"
-                {...register('country')}
+                type="date"
+                id="birthDate"
+                {...register('birthDate')}
                 className="w-full px-4 py-3 rounded-lg text-base transition-all"
                 style={{
                   border: '1px solid #dddddd',
@@ -94,19 +94,19 @@ export default function NewAuthor() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
-              {errors.country && (
-                <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.country.message}</p>
+              {errors.birthDate && (
+                <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.birthDate.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="birthYear" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
-                Año de Nacimiento
+              <label htmlFor="description" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                Descripción
               </label>
-              <input
-                type="number"
-                id="birthYear"
-                {...register('birthYear', { valueAsNumber: true })}
+              <textarea
+                id="description"
+                {...register('description')}
+                rows={4}
                 className="w-full px-4 py-3 rounded-lg text-base transition-all"
                 style={{
                   border: '1px solid #dddddd',
@@ -122,19 +122,19 @@ export default function NewAuthor() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
-              {errors.birthYear && (
-                <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.birthYear.message}</p>
+              {errors.description && (
+                <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.description.message}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="imageUrl" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+              <label htmlFor="image" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
                 URL de Imagen
               </label>
               <input
                 type="text"
-                id="imageUrl"
-                {...register('imageUrl')}
+                id="image"
+                {...register('image')}
                 className="w-full px-4 py-3 rounded-lg text-base transition-all"
                 style={{
                   border: '1px solid #dddddd',
@@ -150,7 +150,7 @@ export default function NewAuthor() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
-              {errors.imageUrl && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.imageUrl.message}</p>}
+              {errors.image && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.image.message}</p>}
             </div>
 
             <div className="flex gap-3 pt-4">

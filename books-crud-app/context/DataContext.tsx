@@ -2,66 +2,124 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Book, Author } from '@/lib/types';
-import initialData from '@/data/books.json';
+
+const API_BASE_URL = 'http://127.0.0.1:8080/api';
 
 interface DataContextType {
   books: Book[];
   authors: Author[];
-  addBook: (book: Omit<Book, 'id'>) => void;
-  updateBook: (id: string, book: Omit<Book, 'id'>) => void;
-  deleteBook: (id: string) => void;
-  addAuthor: (author: Omit<Author, 'id'>) => void;
-  updateAuthor: (id: string, author: Omit<Author, 'id'>) => void;
-  deleteAuthor: (id: string) => void;
-  getBookById: (id: string) => Book | undefined;
-  getAuthorById: (id: string) => Author | undefined;
+  loading: boolean;
+  error: string | null;
+  addBook: (book: Omit<Book, 'id'>, authorId: number) => void;
+  updateBook: (id: number, book: Omit<Book, 'id'>) => void;
+  deleteBook: (id: number) => void;
+  addAuthor: (author: Omit<Author, 'id' | 'books' | 'prizes'>) => void;
+  updateAuthor: (id: number, author: Omit<Author, 'id' | 'books' | 'prizes'>) => void;
+  deleteAuthor: (id: number) => void;
+  getBookById: (id: number) => Book | undefined;
+  getAuthorById: (id: number) => Author | undefined;
+  refreshAuthors: () => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export function DataProvider({ children }: { children: ReactNode }) {
-  const [books, setBooks] = useState<Book[]>([]);
   const [authors, setAuthors] = useState<Author[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Flatten books from all authors
+  const books = authors.flatMap(author =>
+    author.books.map(book => ({ ...book }))
+  );
+
+  const fetchAuthors = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch(`${API_BASE_URL}/authors`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setAuthors(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch authors');
+      console.error('Error fetching authors:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setBooks(initialData.books);
-    setAuthors(initialData.authors);
+    fetchAuthors();
   }, []);
 
-  const addBook = (book: Omit<Book, 'id'>) => {
-    const newBook = { ...book, id: Date.now().toString() };
-    setBooks((prev) => [...prev, newBook]);
+  const addBook = (book: Omit<Book, 'id'>, authorId: number) => {
+    const newBook = { ...book, id: Date.now() };
+    setAuthors((prev) =>
+      prev.map((author) =>
+        author.id === authorId
+          ? { ...author, books: [...author.books, newBook] }
+          : author
+      )
+    );
   };
 
-  const updateBook = (id: string, book: Omit<Book, 'id'>) => {
-    setBooks((prev) => prev.map((b) => (b.id === id ? { ...book, id } : b)));
+  const updateBook = (id: number, book: Omit<Book, 'id'>) => {
+    setAuthors((prev) =>
+      prev.map((author) => ({
+        ...author,
+        books: author.books.map((b) =>
+          b.id === id ? { ...book, id } : b
+        ),
+      }))
+    );
   };
 
-  const deleteBook = (id: string) => {
-    setBooks((prev) => prev.filter((b) => b.id !== id));
+  const deleteBook = (id: number) => {
+    setAuthors((prev) =>
+      prev.map((author) => ({
+        ...author,
+        books: author.books.filter((b) => b.id !== id),
+      }))
+    );
   };
 
-  const addAuthor = (author: Omit<Author, 'id'>) => {
-    const newAuthor = { ...author, id: Date.now().toString() };
+  const addAuthor = async (author: Omit<Author, 'id' | 'books' | 'prizes'>) => {
+    const newAuthor = {
+      ...author,
+      id: Date.now(),
+      books: [],
+      prizes: [],
+    };
     setAuthors((prev) => [...prev, newAuthor]);
   };
 
-  const updateAuthor = (id: string, author: Omit<Author, 'id'>) => {
-    setAuthors((prev) => prev.map((a) => (a.id === id ? { ...author, id } : a)));
+  const updateAuthor = async (id: number, author: Omit<Author, 'id' | 'books' | 'prizes'>) => {
+    setAuthors((prev) =>
+      prev.map((a) =>
+        a.id === id
+          ? { ...a, ...author }
+          : a
+      )
+    );
   };
 
-  const deleteAuthor = (id: string) => {
+  const deleteAuthor = (id: number) => {
     setAuthors((prev) => prev.filter((a) => a.id !== id));
   };
 
-  const getBookById = (id: string) => books.find((b) => b.id === id);
-  const getAuthorById = (id: string) => authors.find((a) => a.id === id);
+  const getBookById = (id: number) => books.find((b) => b.id === id);
+  const getAuthorById = (id: number) => authors.find((a) => a.id === id);
 
   return (
     <DataContext.Provider
       value={{
         books,
         authors,
+        loading,
+        error,
         addBook,
         updateBook,
         deleteBook,
@@ -70,6 +128,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         deleteAuthor,
         getBookById,
         getAuthorById,
+        refreshAuthors: fetchAuthors,
       }}
     >
       {children}

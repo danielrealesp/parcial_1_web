@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
-  const { books, deleteBook, getAuthorById } = useData();
+  const { books, authors, deleteBook } = useData();
 
   return (
     <div className="min-h-screen" style={{ background: "#f7f7f7" }}>
@@ -91,7 +91,7 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {books.map((book) => {
-              const author = getAuthorById(book.authorId);
+              const author = authors.find(a => a.books.some(b => b.id === book.id));
               return (
                 <div
                   key={book.id}
@@ -114,8 +114,8 @@ export default function Home() {
                 >
                   {/* Book Cover */}
                   <Image
-                    src={book.imageUrl}
-                    alt={book.title}
+                    src={book.image}
+                    alt={book.name}
                     width={400}
                     height={240}
                     className="w-full h-48 object-cover"
@@ -128,10 +128,13 @@ export default function Home() {
                       className="text-lg font-semibold mb-1"
                       style={{ color: "#222222" }}
                     >
-                      {book.title}
+                      {book.name}
                     </h3>
                     <p className="text-sm mb-1" style={{ color: "#717171" }}>
                       por {author?.name || "Unknown"}
+                    </p>
+                    <p className="text-sm mb-2 line-clamp-2" style={{ color: "#717171" }}>
+                      {book.description}
                     </p>
                     <div className="flex items-center gap-2 mb-3">
                       <span
@@ -141,10 +144,10 @@ export default function Home() {
                           color: "#222222",
                         }}
                       >
-                        {book.genre}
+                        {book.editorial.name}
                       </span>
                       <span className="text-xs" style={{ color: "#717171" }}>
-                        {book.publishedYear}
+                        {new Date(book.publishingDate).getFullYear()}
                       </span>
                     </div>
                     <p className="text-xs mb-4" style={{ color: "#b0b0b0" }}>

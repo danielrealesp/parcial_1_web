@@ -92,7 +92,7 @@ export default function Authors() {
               >
                 {/* Author Image */}
                 <Image
-                  src={author.imageUrl}
+                  src={author.image}
                   alt={author.name}
                   width={400}
                   height={240}
@@ -105,8 +105,8 @@ export default function Authors() {
                   <h3 className="text-lg font-semibold mb-1" style={{ color: '#222222' }}>
                     {author.name}
                   </h3>
-                  <p className="text-sm mb-1" style={{ color: '#717171' }}>
-                    {author.country}
+                  <p className="text-sm mb-2 line-clamp-2" style={{ color: '#717171' }}>
+                    {author.description}
                   </p>
                   <div className="flex items-center gap-2 mb-3">
                     <span
@@ -116,7 +116,7 @@ export default function Authors() {
                         color: '#222222'
                       }}
                     >
-                      Nacido {author.birthYear}
+                      Nacido {new Date(author.birthDate).toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
                     </span>
                   </div>
 

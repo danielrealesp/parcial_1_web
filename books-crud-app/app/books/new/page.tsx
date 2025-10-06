@@ -20,7 +20,15 @@ export default function NewBook() {
   });
 
   const onSubmit = async (data: BookFormData) => {
-    addBook(data);
+    const { authorId, editorialName, ...bookData } = data;
+    const book = {
+      ...bookData,
+      editorial: {
+        id: Date.now(),
+        name: editorialName,
+      },
+    };
+    addBook(book, Number(authorId));
     router.push('/');
   };
 
@@ -46,13 +54,13 @@ export default function NewBook() {
         <div className="bg-white rounded-xl p-8" style={{ boxShadow: '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)', border: '1px solid #ebebeb' }}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label htmlFor="title" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
-                Título
+              <label htmlFor="name" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                Nombre del Libro
               </label>
               <input
                 type="text"
-                id="title"
-                {...register('title')}
+                id="name"
+                {...register('name')}
                 className="w-full px-4 py-3 rounded-lg text-base transition-all"
                 style={{
                   border: '1px solid #dddddd',
@@ -68,7 +76,7 @@ export default function NewBook() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
-              {errors.title && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.title.message}</p>}
+              {errors.name && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.name.message}</p>}
             </div>
 
             <div>
@@ -106,6 +114,34 @@ export default function NewBook() {
             </div>
 
             <div>
+              <label htmlFor="description" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                Descripción
+              </label>
+              <textarea
+                id="description"
+                {...register('description')}
+                rows={4}
+                className="w-full px-4 py-3 rounded-lg text-base transition-all"
+                style={{
+                  border: '1px solid #dddddd',
+                  background: 'white',
+                  color: '#222222'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#222222';
+                  e.currentTarget.style.boxShadow = '0 0 0 1px #222222';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#dddddd';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              />
+              {errors.description && (
+                <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.description.message}</p>
+              )}
+            </div>
+
+            <div>
               <label htmlFor="isbn" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
                 ISBN
               </label>
@@ -133,13 +169,13 @@ export default function NewBook() {
 
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label htmlFor="publishedYear" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
-                  Año de Publicación
+                <label htmlFor="publishingDate" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                  Fecha de Publicación
                 </label>
                 <input
-                  type="number"
-                  id="publishedYear"
-                  {...register('publishedYear', { valueAsNumber: true })}
+                  type="date"
+                  id="publishingDate"
+                  {...register('publishingDate')}
                   className="w-full px-4 py-3 rounded-lg text-base transition-all"
                   style={{
                     border: '1px solid #dddddd',
@@ -155,19 +191,19 @@ export default function NewBook() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
-                {errors.publishedYear && (
-                  <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.publishedYear.message}</p>
+                {errors.publishingDate && (
+                  <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.publishingDate.message}</p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="genre" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
-                  Género
+                <label htmlFor="editorialName" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+                  Editorial
                 </label>
                 <input
                   type="text"
-                  id="genre"
-                  {...register('genre')}
+                  id="editorialName"
+                  {...register('editorialName')}
                   className="w-full px-4 py-3 rounded-lg text-base transition-all"
                   style={{
                     border: '1px solid #dddddd',
@@ -183,18 +219,18 @@ export default function NewBook() {
                     e.currentTarget.style.boxShadow = 'none';
                   }}
                 />
-                {errors.genre && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.genre.message}</p>}
+                {errors.editorialName && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.editorialName.message}</p>}
               </div>
             </div>
 
             <div>
-              <label htmlFor="imageUrl" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
+              <label htmlFor="image" className="block text-sm font-semibold mb-2" style={{ color: '#222222' }}>
                 URL de Imagen
               </label>
               <input
                 type="text"
-                id="imageUrl"
-                {...register('imageUrl')}
+                id="image"
+                {...register('image')}
                 className="w-full px-4 py-3 rounded-lg text-base transition-all"
                 style={{
                   border: '1px solid #dddddd',
@@ -210,7 +246,7 @@ export default function NewBook() {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               />
-              {errors.imageUrl && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.imageUrl.message}</p>}
+              {errors.image && <p className="mt-2 text-sm" style={{ color: '#ff5a5f' }}>{errors.image.message}</p>}
             </div>
 
             <div className="flex gap-3 pt-4">
