@@ -9,6 +9,7 @@ export interface Organization {
   tipo: string;
 }
 
+//Esto lo puse pero no tengo info del API de como viene
 export interface Prize {
   id: number;
   premiationDate: string;
@@ -27,7 +28,7 @@ export interface Book {
   editorial: Editorial;
 }
 
-export type ReadingStatus = 'Sin iniciar' | 'En curso' | 'Completado';
+export type ReadingStatus = "Sin iniciar" | "En curso" | "Completado";
 
 export interface Author {
   id: number;
@@ -49,7 +50,7 @@ export interface ReadingStats {
 
 // Helper function to get reading status from progress
 export function getReadingStatus(progress: number): ReadingStatus {
-  if (progress === 0) return 'Sin iniciar';
-  if (progress === 100) return 'Completado';
-  return 'En curso';
+  if (progress === 0) return "Sin iniciar";
+  if (progress === 100) return "Completado";
+  return "En curso";
 }
